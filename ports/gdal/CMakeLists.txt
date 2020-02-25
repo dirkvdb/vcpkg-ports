@@ -1342,11 +1342,7 @@ add_library(gdal
     apps/gdal_grid_lib.cpp
     apps/gdal_rasterize_lib.cpp
     apps/gdalbuildvrt_lib.cpp
-    $<TARGET_OBJECTS:gcore>
-    $<TARGET_OBJECTS:alg>
-    $<TARGET_OBJECTS:frmts>
-    $<TARGET_OBJECTS:ogr>
-    $<TARGET_OBJECTS:port>
+    $<$<BOOL:UNIX>:${CMAKE_BINARY_DIR}/gdal-config>
 )
 
 set(GDAL_PUBLIC_HEADERS
@@ -1469,4 +1465,27 @@ if (MSVC)
     configure_file(cpl_config.h.vc.cmake.in ${CMAKE_BINARY_DIR}/cpl_config.h)
 else ()
     configure_file(cpl_config.h.cmake.in ${CMAKE_BINARY_DIR}/cpl_config.h)
+endif ()
+
+if (UNIX)
+    add_custom_command(
+        OUTPUT ${CMAKE_BINARY_DIR}/gdal-config
+        COMMAND
+            ${CMAKE_COMMAND}
+            -DGDAL_CONFIG_INPUT=${CMAKE_CURRENT_SOURCE_DIR}/apps/gdal-config.in
+            -DGDAL_CONFIG_OUTPUT=${CMAKE_BINARY_DIR}/gdal-config
+            -DGDAL_LIB_LOCATION=${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/$<TARGET_FILE_NAME:gdal>
+            -DGDAL_CFLAGS="-I${GDAL_PREFIX}/include"
+            -DINSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+            -DGDAL_DATADIR=${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/gdal
+            -DGDAL_VERSION=${PROJECT_VERSION}
+            -P ${CMAKE_CURRENT_SOURCE_DIR}/create-gdal-config.cmake
+        MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/apps/gdal-config.in
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/create-gdal-config.cmake
+    )
+
+    install(PROGRAMS
+        ${CMAKE_BINARY_DIR}/gdal-config
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
+    )
 endif ()

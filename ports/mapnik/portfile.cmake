@@ -8,8 +8,6 @@ set(PACKAGE ${PACKAGE_NAME}.tar.bz2)
 vcpkg_fail_port_install(ON_TARGET "Windows" MESSAGE "Mapnik is not supported on windows")
 vcpkg_find_acquire_program(PYTHON3)
 
-# Extract source into architecture specific directory, because GDALs' build currently does not
-# support out of source builds.
 set(SOURCE_PATH_DEBUG   ${CURRENT_BUILDTREES_DIR}/src-${TARGET_TRIPLET}-debug/${PORT}-${VERSION})
 set(SOURCE_PATH_RELEASE ${CURRENT_BUILDTREES_DIR}/src-${TARGET_TRIPLET}-release/${PORT}-${VERSION})
 
@@ -30,7 +28,6 @@ foreach(BUILD_TYPE debug release)
         ${CMAKE_CURRENT_LIST_DIR}/tiff-link.patch
         ${CMAKE_CURRENT_LIST_DIR}/icu-link.patch
         ${CMAKE_CURRENT_LIST_DIR}/config-path.patch
-        ${CMAKE_CURRENT_LIST_DIR}/gdallib-detection.patch
     )
 endforeach()
 
@@ -85,7 +82,7 @@ else ()
 endif ()
 
 if ("gdal" IN_LIST FEATURES)
-    list(APPEND SCONS_OPTIONS GDAL_CONFIG=${CURRENT_INSTALLED_DIR}/tools/gdal-config)
+    list(APPEND SCONS_OPTIONS GDAL_CONFIG=${CURRENT_INSTALLED_DIR}/tools/gdal/gdal-config)
     set(MAPNIK_INPUT_PLUGINS "${MAPNIK_INPUT_PLUGINS},gdal")
 else ()
     list(APPEND SCONS_OPTIONS GDAL_CONFIG=${CURRENT_INSTALLED_DIR}/tools/invalid-config)

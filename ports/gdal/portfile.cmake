@@ -21,6 +21,7 @@ vcpkg_extract_source_archive_ex(
 )
 
 file(COPY ${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt
+          ${CMAKE_CURRENT_LIST_DIR}/create-gdal-config.cmake
           ${CMAKE_CURRENT_LIST_DIR}/cpl_config.h.cmake.in
           ${CMAKE_CURRENT_LIST_DIR}/cpl_config.h.vc.cmake.in
           ${CMAKE_CURRENT_LIST_DIR}/GDALConfig.cmake.in
@@ -53,6 +54,7 @@ vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
     PREFER_NINJA
     OPTIONS
+        -DGDAL_PREFIX=PATH:${CURRENT_INSTALLED_DIR}
         -DGDAL_THREAD_SUPPORT=ON
         -DGDAL_ZLIB_SUPPORT=ON
         -DGDAL_PNG_SUPPORT=${WITH_PNG}
@@ -94,8 +96,16 @@ file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/share)
 if (WITH_TOOLS)
     file(GLOB TOOLS "${CURRENT_PACKAGES_DIR}/bin/*")
     file(COPY ${TOOLS} DESTINATION ${CURRENT_PACKAGES_DIR}/tools/${PORT})
-    file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/bin)
+elseif (EXISTS "${CURRENT_PACKAGES_DIR}/bin/gdal-config")
+    file(COPY ${CURRENT_PACKAGES_DIR}/bin/gdal-config DESTINATION ${CURRENT_PACKAGES_DIR}/tools/${PORT}/)
 endif ()
+
+if (EXISTS ${CURRENT_PACKAGES_DIR}/tools/${PORT}/gdal-config)
+    vcpkg_replace_string(${CURRENT_PACKAGES_DIR}/tools/${PORT}/gdal-config "${CURRENT_PACKAGES_DIR}" "${CURRENT_INSTALLED_DIR}")
+endif ()
+
+file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/bin)
+file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/bin)
 
 # Handle copyright
 file(INSTALL ${CURRENT_PACKAGES_DIR}/share/gdal/LICENSE.TXT DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)
