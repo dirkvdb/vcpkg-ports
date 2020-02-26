@@ -1342,6 +1342,11 @@ add_library(gdal
     apps/gdal_grid_lib.cpp
     apps/gdal_rasterize_lib.cpp
     apps/gdalbuildvrt_lib.cpp
+    $<TARGET_OBJECTS:gcore>
+    $<TARGET_OBJECTS:alg>
+    $<TARGET_OBJECTS:frmts>
+    $<TARGET_OBJECTS:ogr>
+    $<TARGET_OBJECTS:port>
     $<$<BOOL:UNIX>:${CMAKE_BINARY_DIR}/gdal-config>
 )
 
