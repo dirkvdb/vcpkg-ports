@@ -1347,7 +1347,7 @@ add_library(gdal
     $<TARGET_OBJECTS:frmts>
     $<TARGET_OBJECTS:ogr>
     $<TARGET_OBJECTS:port>
-    $<$<BOOL:UNIX>:${CMAKE_BINARY_DIR}/gdal-config>
+    $<$<BOOL:${UNIX}>:${CMAKE_BINARY_DIR}/gdal-config>
 )
 
 set(GDAL_PUBLIC_HEADERS
