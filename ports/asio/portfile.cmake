@@ -1,25 +1,15 @@
-#header-only library
-include(vcpkg_common_functions)
-
-vcpkg_download_distfile(
-	ARCHIVE_FILE
-	URLS "https://netix.dl.sourceforge.net/project/asio/asio/1.12.2%20%28Stable%29/asio-1.12.2.zip"
-	FILENAME "asio-1.12.2.zip"
-	SHA512 f0e945a7c7bc25c15b375b76f3aaff7c6c2c2ca981d1ee207990d14425b23aee2365d295ae78c216b67d6f70cc9d99a8558a879f5c2cd882dc91f56e7e643cc4
+vcpkg_from_github(
+	OUT_SOURCE_PATH SOURCE_PATH
+	REPO chriskohlhoff/asio
+	REF asio-1-12-2
+	SHA512 7c2e213ff154bb2e5776b37906d437a62206f973316c94706e6d42e3c2f0866e7d97f3e40225ab5f28bf2c4a33fa0b38a4b75421aef86ddf9f2da0811caa2d00
 )
-
-vcpkg_extract_source_archive(
-	${ARCHIVE_FILE}
-)
-
-set(SOURCE_PATH ${CURRENT_BUILDTREES_DIR}/src/asio-1.12.2)
 
 # Handle copyright
-file(COPY ${SOURCE_PATH}/COPYING DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT})
-file(RENAME ${CURRENT_PACKAGES_DIR}/share/${PORT}/COPYING ${CURRENT_PACKAGES_DIR}/share/${PORT}/copyright)
+file(INSTALL ${SOURCE_PATH}/asio/COPYING DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)
 
 # Copy the asio header files
-file(INSTALL ${SOURCE_PATH}/include DESTINATION ${CURRENT_PACKAGES_DIR} FILES_MATCHING PATTERN "*.hpp" PATTERN "*.ipp")
+file(INSTALL ${SOURCE_PATH}/${PORT}/include DESTINATION ${CURRENT_PACKAGES_DIR} FILES_MATCHING PATTERN "*.hpp" PATTERN "*.ipp")
 
 # Always use "ASIO_STANDALONE" to avoid boost dependency
 file(READ "${CURRENT_PACKAGES_DIR}/include/asio/detail/config.hpp" _contents)
