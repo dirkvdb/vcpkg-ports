@@ -1,0 +1,12 @@
+diff -Naur a/SConstruct b/SConstruct
+--- a/SConstruct	2020-02-18 11:26:42.000000000 +0100
++++ b/SConstruct	2020-02-27 20:53:25.000000000 +0100
+@@ -616,7 +616,7 @@
+                 # TODO - upgrade our scons logic to support Framework linking
+                 if env['PLATFORM'] == 'Darwin':
+                     value = call(cmd,silent=True)
+-                    if value and '-framework GDAL' in value:
++                    if value and b'-framework GDAL' in value:
+                         env['LIBS'].append('gdal')
+                         if os.path.exists('/Library/Frameworks/GDAL.framework/unix/lib'):
+                             env['LIBPATH'].insert(0,'/Library/Frameworks/GDAL.framework/unix/lib')

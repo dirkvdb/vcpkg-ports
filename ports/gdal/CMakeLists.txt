@@ -1473,7 +1473,7 @@ else ()
 endif ()
 
 if (UNIX)
-    set(GDAL_DEP_LIBS -lpthread -lm)
+    set(GDAL_DEP_LIBS -liconv -lpthread -lm)
     if (NOT APPLE)
         list(APPEND GDAL_DEP_LIBS -lrt -ldl)
     endif ()

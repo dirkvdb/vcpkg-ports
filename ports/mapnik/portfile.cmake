@@ -17,27 +17,24 @@ vcpkg_download_distfile(ARCHIVE
     SHA512 d901e092c8d876bc21f0e8cb713a6d102308983652f21f4fb5f120c50616724b692bcf0abe66ffecf1f0aa8a60e0f9b803be85eb0eee83c477895082559b38c9
 )
 
-foreach(BUILD_TYPE debug release)
-    set(CONFIG_SOURCE_PATH ${CURRENT_BUILDTREES_DIR}/src-${TARGET_TRIPLET}-${BUILD_TYPE})
-    file(REMOVE_RECURSE ${CONFIG_SOURCE_PATH})
-    vcpkg_extract_source_archive(${ARCHIVE} ${CONFIG_SOURCE_PATH})
-    vcpkg_apply_patches(
-        SOURCE_PATH ${CONFIG_SOURCE_PATH}/${PACKAGE_NAME}
-        PATCHES
-        ${CMAKE_CURRENT_LIST_DIR}/mapnik-render-link.patch
-        ${CMAKE_CURRENT_LIST_DIR}/tiff-link.patch
-        ${CMAKE_CURRENT_LIST_DIR}/icu-link.patch
-        ${CMAKE_CURRENT_LIST_DIR}/config-path.patch
-    )
-endforeach()
+vcpkg_extract_source_archive_ex(
+    OUT_SOURCE_PATH SOURCE_PATH
+    ARCHIVE ${ARCHIVE}
+    PATCHES
+        gdal-framework.patch
+        mapnik-render-link.patch
+        tiff-link.patch
+        icu-link.patch
+        config-path.patch
+)
 
-if (VCPKG_CHAINLOAD_TOOLCHAIN_FILE)
-    include (${VCPKG_CHAINLOAD_TOOLCHAIN_FILE})
-elseif(VCPKG_TARGET_TRIPLET)
-    # include the triplet cmake toolchain file if it is present unless a chainload toolchain was provided
-    include(${CMAKE_CURRENT_LIST_DIR}/../../triplets/${VCPKG_TARGET_TRIPLET}.cmake OPTIONAL)
-    message(STATUS "XXX using triplet toolchain settings ${CMAKE_CURRENT_LIST_DIR}/../../triplets/${VCPKG_TARGET_TRIPLET}.cmake")
-endif ()
+set(SOURCE_PATH_DEBUG ${CURRENT_BUILDTREES_DIR}/src/mapnik-dbg)
+set(SOURCE_PATH_RELEASE ${CURRENT_BUILDTREES_DIR}/src/mapnik-rel)
+
+file(REMOVE ${SOURCE_PATH_DEBUG})
+file(REMOVE ${SOURCE_PATH_RELEASE})
+file(COPY ${SOURCE_PATH}/ DESTINATION ${SOURCE_PATH_DEBUG})
+file(COPY ${SOURCE_PATH}/ DESTINATION ${SOURCE_PATH_RELEASE})
 
 set(MAPNIK_INPUT_PLUGINS "raster,shape,csv,geojson")
 
