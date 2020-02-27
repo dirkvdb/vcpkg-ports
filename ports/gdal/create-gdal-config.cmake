@@ -3,7 +3,7 @@ file(READ ${GDAL_CONFIG_INPUT} GDAL_CONFIG_CONTENTS)
 string(JOIN "\n" HDR
     "#!/bin/sh"
     "CONFIG_LIBS=\"${GDAL_LIB_LOCATION}\""
-    "CONFIG_DEP_LIBS=\"-lpthread -lm -lrt -ldl\""
+    "CONFIG_DEP_LIBS=\"${GDAL_DEP_LIBS}\""
     "CONFIG_PREFIX=\"${INSTALL_PREFIX}\""
     "CONFIG_CFLAGS=\"${GDAL_CFLAGS}\""
     "CONFIG_DATA=\"${GDAL_DATADIR}\""

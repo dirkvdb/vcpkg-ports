@@ -1473,6 +1473,11 @@ else ()
 endif ()
 
 if (UNIX)
+    set(GDAL_DEP_LIBS -lpthread -lm)
+    if (NOT APPLE)
+        list(APPEND GDAL_DEP_LIBS -lrt -ldl)
+    endif ()
+
     add_custom_command(
         OUTPUT ${CMAKE_BINARY_DIR}/gdal-config
         COMMAND
@@ -1481,6 +1486,7 @@ if (UNIX)
             -DGDAL_CONFIG_OUTPUT=${CMAKE_BINARY_DIR}/gdal-config
             -DGDAL_LIB_LOCATION=${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/$<TARGET_FILE_NAME:gdal>
             -DGDAL_CFLAGS="-I${GDAL_PREFIX}/include"
+            -DGDAL_DEP_LIBS="${GDAL_DEP_LIBS}"
             -DINSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
             -DGDAL_DATADIR=${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/gdal
             -DGDAL_VERSION=${PROJECT_VERSION}
